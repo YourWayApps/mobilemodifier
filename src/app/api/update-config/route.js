@@ -22,8 +22,7 @@ export async function POST(req) {
       }
     });
 
-    const forkedRepoName = forkResponse.data.name; // This should be newRepoName
-    const forkedRepoFullName = `${owner}/${forkedRepoName}`;
+    const forkedRepoFullName = `${owner}/${newRepoName}`;
 
     // Wait for the fork to be fully created
     await new Promise(resolve => setTimeout(resolve, 10000)); // 10 seconds delay
@@ -52,7 +51,15 @@ export async function POST(req) {
       sha: file.sha, // Existing file's SHA
     });
 
-    return NextResponse.json({ message: 'Config updated successfully!' });
+    // Optionally trigger a workflow to build and deploy the forked repository
+    await octokit.actions.createWorkflowDispatch({
+      owner,
+      repo: newRepoName,
+      workflow_id: 'build-and-deploy.yml', // Workflow file name
+      ref: 'main', // Branch to run the workflow
+    });
+
+    return NextResponse.json({ message: 'Config updated and build triggered successfully!' });
   } catch (error) {
     console.error('Error updating config.json:', error);
     return NextResponse.json({ message: 'Error updating config.json' }, { status: 500 });

@@ -11,7 +11,7 @@ const Home = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ textColor,newRepoName: 'MobileTemplateFork2' }),
+      body: JSON.stringify({ textColor,newRepoName: 'MobileTemplateFork3' }),
     });
 
     if (res.ok) {
